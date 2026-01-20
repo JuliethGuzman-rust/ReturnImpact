@@ -18,7 +18,7 @@ from functools import wraps
 
 import os
 DATABASE = os.path.join(os.path.dirname(__file__), "returnimpact.db")
-print(">>> USING DATABASE FILE:", DATABASE)
+# print(">>> USING DATABASE FILE:", DATABASE)
 
 
 # ------------------------------------------------------------
