@@ -188,129 +188,140 @@
      JS — Routing toggle + Add Leg + Multimodal validation
 ============================================================ -->
 <script>
-let legIndex = 0;
+  const transportModes = [
+    {% for t in transport_modes %}
+      { value: "{{ t.api_value }}", label: "{{ t.name }}" },
+    {% endfor %}
+  ];
 
-function toggleRoutingMode() {
-  const single = document.getElementById("single-mode-section");
-  const multi = document.getElementById("multimodal-section");
-  const selected = document.querySelector("input[name='routing_type']:checked")?.value || "single";
+  let legIndex = 0;
 
-  // Single-mode inputs (disable when multi selected so they don't block submit)
-  const singleDeparture = document.getElementById("departure_location");
-  const singleDestination = document.getElementById("destination_location");
-  const singleModeSelect = document.getElementById("transport_mode_id");
+  function toggleRoutingMode() {
+    const single = document.getElementById("single-mode-section");
+    const multi = document.getElementById("multimodal-section");
+    const selected = document.querySelector("input[name='routing_type']:checked")?.value || "single";
 
-  if (selected === "single") {
-    single.style.display = "block";
-    multi.style.display = "none";
+    // Single-mode inputs (disable when multi selected so they don't block submit)
+    const singleDeparture = document.getElementById("departure_location");
+    const singleDestination = document.getElementById("destination_location");
+    const singleModeSelect = document.getElementById("transport_mode_id");
 
-    singleDeparture.disabled = false;
-    singleDestination.disabled = false;
-    singleModeSelect.disabled = false;
+    if (selected === "single") {
+      single.style.display = "block";
+      multi.style.display = "none";
 
-    singleDeparture.required = true;
-    singleDestination.required = true;
+      singleDeparture.disabled = false;
+      singleDestination.disabled = false;
+      singleModeSelect.disabled = false;
 
-  } else {
-    single.style.display = "none";
-    multi.style.display = "block";
+      singleDeparture.required = true;
+      singleDestination.required = true;
 
-    singleDeparture.disabled = true;
-    singleDestination.disabled = true;
-    singleModeSelect.disabled = true;
+    } else {
+      single.style.display = "none";
+      multi.style.display = "block";
 
-    singleDeparture.required = false;
-    singleDestination.required = false;
-  }
-}
+      singleDeparture.disabled = true;
+      singleDestination.disabled = true;
+      singleModeSelect.disabled = true;
 
-function addLeg() {
-  const container = document.getElementById("legs-container");
-  if (!container) return;
-
-  const leg = document.createElement("div");
-  leg.className = "leg-card";
-  leg.style.marginBottom = "1rem";
-
-  leg.innerHTML = `
-    <h4>Leg ${legIndex + 1}</h4>
-
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Start Location</label>
-        <input name="legs[${legIndex}][start]"
-               placeholder="e.g. Rotterdam, Netherlands"
-               required>
-      </div>
-
-      <div class="form-group">
-        <label>Transport Mode</label>
-        <select name="legs[${legIndex}][mode]" required>
-          {% for t in transport_modes %}
-            <option value="{{ t.api_value }}">{{ t.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>End Location</label>
-        <input name="legs[${legIndex}][end]"
-               placeholder="e.g. Amsterdam Airport Schiphol"
-               required>
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="button" class="btn-danger" onclick="this.closest('.leg-card').remove()">
-        Remove Leg
-      </button>
-    </div>
-  `;
-
-  container.appendChild(leg);
-  legIndex++;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  toggleRoutingMode();
-
-  document.querySelectorAll("input[name='routing_type']").forEach((radio) => {
-    radio.addEventListener("change", toggleRoutingMode);
-  });
-
-  const addBtn = document.getElementById("addLegBtn");
-  if (addBtn) {
-    addBtn.addEventListener("click", addLeg);
+      singleDeparture.required = false;
+      singleDestination.required = false;
+    }
   }
 
-  const form = document.querySelector("form");
-  if (!form) return;
+  // UPDATE 2 — Replace your entire addLeg() function with this version
+  // This version uses the new transportModes array and correctly populates the dropdown
+  function addLeg() {
+    const container = document.getElementById("legs-container");
+    if (!container) return;
 
-  form.addEventListener("submit", function (event) {
-    const routingType = document.querySelector("input[name='routing_type']:checked")?.value || "single";
+    let optionsHtml = "";
+    transportModes.forEach(t => {
+      optionsHtml += `<option value="${t.value}">${t.label}</option>`;
+    });
 
-    if (routingType === "multi") {
-      const legs = document.querySelectorAll("#legs-container .leg-card");
-      if (legs.length === 0) {
-        alert("Please add at least one leg for a multimodal route.");
-        event.preventDefault();
-        return;
-      }
+    const leg = document.createElement("div");
+    leg.className = "leg-card";
+    leg.style.marginBottom = "1rem";
 
-      for (const leg of legs) {
-        const start = leg.querySelector("input[name*='[start]']")?.value.trim();
-        const mode = leg.querySelector("select[name*='[mode]']")?.value.trim();
-        const end = leg.querySelector("input[name*='[end]']")?.value.trim();
+    leg.innerHTML = `
+      <h4>Leg ${legIndex + 1}</h4>
 
-        if (!start || !mode || !end) {
-          alert("Each leg must include a start location, transport mode, and end location.");
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Start Location</label>
+          <input name="legs[${legIndex}][start]"
+                 placeholder="e.g. Rotterdam, Netherlands"
+                 required>
+        </div>
+
+        <div class="form-group">
+          <label>Transport Mode</label>
+          <select name="legs[${legIndex}][mode]" required>
+            ${optionsHtml}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>End Location</label>
+          <input name="legs[${legIndex}][end]"
+                 placeholder="e.g. Amsterdam, Netherlands"
+                 required>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-danger" onclick="this.closest('.leg-card').remove()">
+          Remove Leg
+        </button>
+      </div>
+    `;
+
+    container.appendChild(leg);
+    legIndex++;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    toggleRoutingMode();
+
+    document.querySelectorAll("input[name='routing_type']").forEach((radio) => {
+      radio.addEventListener("change", toggleRoutingMode);
+    });
+
+    const addBtn = document.getElementById("addLegBtn");
+    if (addBtn) {
+      addBtn.addEventListener("click", addLeg);
+    }
+
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    form.addEventListener("submit", function (event) {
+      const routingType = document.querySelector("input[name='routing_type']:checked")?.value || "single";
+
+      if (routingType === "multi") {
+        const legs = document.querySelectorAll("#legs-container .leg-card");
+        if (legs.length === 0) {
+          alert("Please add at least one leg for a multimodal route.");
           event.preventDefault();
           return;
         }
+
+        for (const leg of legs) {
+          const start = leg.querySelector("input[name*='[start]']")?.value.trim();
+          const mode = leg.querySelector("select[name*='[mode]']")?.value.trim();
+          const end = leg.querySelector("input[name*='[end]']")?.value.trim();
+
+          if (!start || !mode || !end) {
+            alert("Each leg must include a start location, transport mode, and end location.");
+            event.preventDefault();
+            return;
+          }
+        }
       }
-    }
+    });
   });
-});
 </script>
 
 {% endblock %}
