@@ -36,8 +36,8 @@ from io import StringIO
 
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash, Response
 
-from ..helpers import get_db, login_required
-from ..co2_api import calculate_co2_intermodal_route, ClimatiqError
+from helpers import get_db, login_required
+from co2_api import calculate_co2_intermodal_route, ClimatiqError
 
 returns_bp = Blueprint("returns", __name__)
 
