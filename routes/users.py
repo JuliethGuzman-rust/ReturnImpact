@@ -15,7 +15,7 @@
 
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
 from werkzeug.security import generate_password_hash
-from ..helpers import get_db, login_required
+from helpers import get_db, login_required
 
 users_bp = Blueprint("users", __name__)
 
