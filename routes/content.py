@@ -8,7 +8,7 @@
 # - MDN forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
 
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
-from ..helpers import get_db, login_required
+from helpers import get_db, login_required
 
 content_bp = Blueprint("content", __name__)
 
