@@ -192,7 +192,7 @@
 <script>
   const transportModes = [
     {% for t in transport_modes %}
-      { value: "{{ t.id }}", label: {{ t.name|tojson }} },
+      { value: "{{ t.api_value }}", label: {{ t.name|tojson }} },
     {% endfor %}
   ];
 
