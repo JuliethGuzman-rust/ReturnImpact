@@ -1,0 +1,931 @@
+/* ========================================================================
+   styles.css — Global Styling for ReturnImpact
+
+   References (real):
+   - MDN CSS Reference:
+     https://developer.mozilla.org/en-US/docs/Web/CSS/Reference
+   - MDN CSS Custom Properties (Variables):
+     https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
+   - MDN Box Sizing:
+     https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
+   - MDN Flexbox:
+     https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout
+   - MDN Grid Layout:
+     https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+   - MDN focus-visible (accessibility):
+     https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+   - MDN accent-color (form controls):
+     https://developer.mozilla.org/en-US/docs/Web/CSS/accent-color
+   - MDN Responsive Design basics:
+     https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design
+   - W3C WAI Tables tutorial (accessibility):
+     https://www.w3.org/WAI/tutorials/tables/
+
+   Notes:
+   - This file is organized by site areas (base, nav, tables, forms, dashboard, index).
+   - Avoid inline styles in templates when possible; prefer adding classes here.
+======================================================================== */
+
+
+/* ========================================================================
+   GLOBAL RESET + BASELINE
+   ======================================================================== */
+
+*, *::before, *::after {
+    box-sizing: border-box; /* Ref: https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing */
+}
+
+html {
+    font-size: 20px;
+    scroll-behavior: smooth; /* Ref: https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior */
+}
+
+body {
+    font-family: "Nunito", "Segoe UI", Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: var(--deep-green);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    display: flex;             /* Ref: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout */
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+
+/* ========================================================================
+   PAGE WRAPPER (Centered site container)
+   Ref: Responsive layout patterns
+   https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design
+   ======================================================================== */
+
+.page-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+@media (max-width: 600px) {
+    .page-wrapper {
+        padding: 0 1rem;
+    }
+}
+
+
+/* ========================================================================
+   DESIGN SYSTEM — COLORS + CONSTANTS
+   ======================================================================== */
+
+:root {
+    --deep-green: #19350C;
+    --olive-green: #687D31;
+    --soft-neutral: #D5D3CC;
+    --teal-dark: #406768;
+    --teal-light: #6FA9BB;
+
+    --gray-100: #f5f5f5;
+    --gray-200: #eeeeee;
+    --gray-300: #e0e0e0;
+    --gray-600: #757575;
+    --gray-900: #212121;
+
+    --success: #4caf50;
+    --warning: #ffb300;
+    --danger: #e53935;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --shadow: 0 2px 6px rgba(0,0,0,0.12);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.18);
+
+    --transition: 0.25s ease;
+}
+
+
+/* ========================================================================
+   TYPOGRAPHY
+   Ref: Text styling basics
+   https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Fundamentals
+   ======================================================================== */
+
+h1 { font-size: 3.2rem; font-weight: 700; margin: 0.6rem 0; }
+h2 { font-size: 2.4rem; font-weight: 700; margin: 0.6rem 0; }
+h3 { font-size: 1.8rem; font-weight: 600; margin: 0.6rem 0; }
+
+p, li, a, span {
+    font-size: 1.3rem;
+}
+
+.muted {
+    color: var(--gray-600);
+}
+
+
+/* ========================================================================
+   SIMPLE SPACING UTILITIES (templates use mt/mb classes)
+   Ref: margin
+   https://developer.mozilla.org/en-US/docs/Web/CSS/margin
+   ======================================================================== */
+
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+
+/* ========================================================================
+   GLOBAL LINK + FOCUS ACCESSIBILITY
+   Ref: :focus-visible
+   https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+   ======================================================================== */
+
+a {
+    color: inherit;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid rgba(111, 169, 187, 0.45);
+    outline-offset: 3px;
+}
+
+
+/* ========================================================================
+   BUTTONS
+   Ref: :hover
+   https://developer.mozilla.org/en-US/docs/Web/CSS/:hover
+   ======================================================================== */
+
+.btn-primary,
+.hero-btn {
+    font-size: 1.4rem;
+    padding: 1rem 1.6rem;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    background-color: var(--olive-green);
+    color: white;
+    transition: background var(--transition), transform var(--transition);
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary:hover {
+    background-color: var(--deep-green);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-300);
+    background: white;
+    color: var(--deep-green);
+    text-decoration: none;
+    transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-secondary:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-danger {
+    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    background-color: var(--danger);
+    color: white;
+    transition: transform var(--transition), box-shadow var(--transition);
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.download-bar,
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.action-buttons form {
+    margin: 0;
+}
+
+
+/* ========================================================================
+   NAVIGATION BAR — sticky + blurred background
+   Ref: position: sticky
+   https://developer.mozilla.org/en-US/docs/Web/CSS/position#sticky
+   ======================================================================== */
+
+.navbar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.75);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navbar > .page-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2rem;
+    width: 100%;
+}
+
+.nav-left, .nav-right {
+    display: flex;
+    gap: 2.2rem;
+}
+
+.nav-link,
+.nav-user {
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--deep-green);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--transition), transform var(--transition);
+}
+
+.nav-link:hover {
+    color: var(--olive-green);
+    transform: translateY(-2px);
+}
+
+.nav-brand a {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--deep-green);
+    text-decoration: none;
+}
+
+
+/* ========================================================================
+   MOBILE NAVIGATION
+   ======================================================================== */
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    width: 26px;
+    height: 3px;
+    background: var(--deep-green);
+    border-radius: 3px;
+}
+
+.nav-mobile {
+    display: none;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-mobile .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+}
+
+.nav-mobile a {
+    color: var(--deep-green);
+    padding: 0.75rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.nav-mobile.open {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .nav-left, .nav-right { display: none; }
+    .nav-toggle { display: flex; }
+}
+
+
+/* ========================================================================
+   CARD SYSTEM
+   ======================================================================== */
+
+.card,
+.form-card,
+.table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+
+/* ========================================================================
+   TABLES
+   Ref: HTML tables
+   https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+   ======================================================================== */
+
+.table-container {
+    overflow-x: auto;
+    width: 100%;
+    padding: 1rem 0;
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+    font-size: 1.3rem;
+    padding: 0.9rem 1rem;
+}
+
+.table-container th {
+    background-color: var(--deep-green);
+    color: white;
+    font-weight: 700;
+}
+
+.table-container tr:nth-child(even) {
+    background-color: var(--gray-100);
+}
+
+/* Prevent currency from wrapping */
+.currency {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Keep action column stable */
+.table-container td:last-child {
+    width: 260px;
+    white-space: nowrap;
+}
+
+
+/* ========================================================================
+   FORMS — Modern styling to match dashboard cards
+   References:
+   - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+   - MDN :focus-visible: https://developer.mozilla.org/en-US/docs/Web/CSS/:focus-visible
+   - MDN Grid: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+   ======================================================================== */
+
+input,
+select,
+textarea,
+button,
+label {
+    font-family: inherit;
+    font-size: 1.3rem;
+    line-height: 1.4;
+    color: var(--deep-green);
+}
+
+input::placeholder,
+textarea::placeholder {
+    font-size: 1.2rem;
+    color: var(--gray-600);
+}
+
+/* Inputs */
+input,
+select,
+textarea {
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-300);
+    background: white;
+    width: 100%;
+    transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 4px rgba(111, 169, 187, 0.25);
+}
+
+/* Two-column layout on desktop, single on mobile */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.4rem 2rem;
+    margin-bottom: 1.6rem;
+}
+
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Form group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--deep-green);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.form-divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 2rem 0;
+}
+
+/* Multimodal leg cards */
+.leg-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 1.6rem;
+    border: 1px solid var(--gray-200);
+}
+
+.leg-card h4 {
+    margin: 0 0 1rem 0;
+}
+
+
+/* ========================================================================
+   ROUTING TYPE — Radio "cards" (Fixes the ugly routing-type layout)
+   References:
+   - CSS Grid: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+   - accent-color: https://developer.mozilla.org/en-US/docs/Web/CSS/accent-color
+   ======================================================================== */
+
+.routing-type {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-top: 0.6rem;
+}
+
+.routing-option {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.routing-option:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: rgba(25,53,12,0.25);
+}
+
+.routing-option input[type="radio"] {
+    accent-color: var(--olive-green);
+    transform: scale(1.25);
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.routing-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.routing-title {
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: var(--deep-green);
+}
+
+.routing-sub {
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 700px) {
+    .routing-type {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ========================================================================
+   DASHBOARD-SPECIFIC LAYOUT
+   ======================================================================== */
+
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.dashboard-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3rem;
+}
+
+.dashboard-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: left;
+}
+
+
+/* ========================================================================
+   SVG ICONS (Dashboard + Analytics)
+   Ref: flex shorthand
+   https://developer.mozilla.org/en-US/docs/Web/CSS/flex
+   ======================================================================== */
+
+.metric-icon-svg {
+    width: 280px;
+    height: 280px;
+    flex: 0 0 280px;
+    flex-shrink: 0;
+    transition: transform 0.4s ease, filter 0.4s ease;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+}
+
+@media (max-width: 900px) {
+    .metric-icon-svg {
+        width: 150px;
+        height: 150px;
+        flex: 0 0 150px;
+    }
+}
+
+@media (max-width: 600px) {
+    .metric-icon-svg {
+        width: 130px;
+        height: 130px;
+        flex: 0 0 130px;
+    }
+}
+/* =========================================================
+   DASHBOARD — Currency formatting
+   Reference:
+   https://developer.mozilla.org/en-US/docs/Web/CSS/::before
+   ========================================================= */
+
+.metric-currency::before {
+    content: "€ ";
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+
+/* ========================================================================
+   METRIC CARDS (Dashboard cards w/ charts)
+   ======================================================================== */
+
+.metric-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 3rem;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    cursor: pointer;
+    gap: 1.2rem;
+}
+
+.metric-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+.metric-card .card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.metric-card .metric-value-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--deep-green);
+}
+
+.metric-card canvas {
+    width: 100% !important;
+    display: block;
+}
+
+
+/* ========================================================================
+   ANALYTICS CARDS (Same icon -> text layout, NO chart)
+   ======================================================================== */
+
+.analytics-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 3rem;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    cursor: pointer;
+    gap: 1rem;
+}
+
+.analytics-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+.analytics-card .card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.analytics-card .metric-value-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--deep-green);
+}
+
+
+/* ========================================================================
+   CHART STYLING
+   ======================================================================== */
+
+canvas {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+}
+
+
+/* ========================================================================
+   INDEX PAGE STYLES (Hero + Features + About + Posts)
+   References:
+   - Grid: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+   - Flexbox: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout
+   - Responsive design: https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design
+   ======================================================================== */
+
+/* Section titles */
+.section-title {
+    margin: 0 0 1rem 0;
+}
+
+/* HERO */
+.hero {
+    padding: 2.5rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.hero-flex {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-title {
+    margin: 0 0 0.6rem 0;
+}
+
+.hero-subtitle {
+    margin: 0 0 1.2rem 0;
+    color: var(--gray-600);
+}
+
+.hero-image {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-img {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .hero-flex {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-image {
+        justify-content: center;
+    }
+
+    .hero {
+        padding: 2rem;
+    }
+}
+
+/* FEATURES — ✅ fixed image sizing + fixed grid column (NO 3200px bug) */
+.feature-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.feature-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+}
+
+.feature-row {
+    display: grid;
+    grid-template-columns: 320px 1fr; /* ✅ corrected */
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.feature-row.reverse {
+    grid-template-columns: 1fr 320px;
+}
+
+.feature-row.reverse img {
+    order: 2;
+}
+
+.feature-img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+}
+
+.feature-text h3 {
+    margin: 0 0 0.5rem 0;
+}
+
+.feature-links {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.feature-links a {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    text-decoration: none;
+}
+
+.feature-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+    .feature-row,
+    .feature-row.reverse {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .feature-row.reverse img {
+        order: 0;
+    }
+
+    .feature-img {
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .feature-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .feature-img {
+        max-width: 320px;
+    }
+}
+
+/* ABOUT */
+.about-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+}
+
+.about-text {
+    margin-top: 0;
+    color: var(--gray-600);
+}
+
+/* POSTS GRID */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.post-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 1.6rem 2rem;
+}
+
+
+/* ========================================================================
+   FOOTER
+   ======================================================================== */
+
+footer {
+    width: 100%;
+    background-color: var(--deep-green);
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin-top: 3rem;
+    border-top: 4px solid var(--olive-green);
+}

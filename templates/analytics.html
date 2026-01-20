@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/analytics.html
+     Purpose: CO₂ analytics dashboard with animated comparison cards,
+              count-up metrics, animated charts, animated divider,
+              and downloadable analytics (CSV, JSON, PDF).
+     Academic References:
+       - Chart.js documentation: https://www.chartjs.org/docs/latest/
+       - Flask template inheritance: https://flask.palletsprojects.com/en/3.0.x/templating/
+       - Jinja tojson filter: https://jinja.palletsprojects.com/en/3.1.x/templates/#tojson-filter
+       - CO₂ equivalence scientific references:
+           * Petrol car emissions (~0.16 kg CO₂ per km)
+           * Smartphone charging (~0.0073 kg CO₂ per charge)
+           * Tree absorption (~22 kg CO₂ per year)
+   ===================================================================== -->
+
+<div class="mt-4">
+
+    <h1 class="mb-4 fade-in-up">CO₂ Analytics</h1>
+
+    <div class="download-bar fade-in-up" style="margin-bottom: 2rem;">
+        <a href="{{ url_for('dashboard.download_analytics', format='csv') }}" class="btn-primary">⬇️ Download CSV</a>
+        <a href="{{ url_for('dashboard.download_analytics', format='json') }}" class="btn-primary">⬇️ Download JSON</a>
+        <a href="{{ url_for('dashboard.download_analytics_pdf') }}" class="btn-primary">⬇️ Download PDF Report</a>
+    </div>
+
+    <div class="section-divider fade-in-divider"></div>
+
+    <!-- ============================================================
+         SUMMARY
+    =============================================================== -->
+    <div class="dashboard-grid mb-5">
+
+        <div class="analytics-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/emissions.svg') }}"
+                     alt="Total emissions icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Total CO₂ Emissions</h5>
+                    <p class="metric-value-large countup"
+                       data-target="{{ total_co2|default(0)|round(2) }}">0</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+         CO₂ EQUIVALENCES
+    =============================================================== -->
+    <h2 class="mt-5 mb-3 fade-in-up">CO₂ Equivalences</h2>
+
+    <div class="dashboard-grid mb-5">
+
+        <div class="analytics-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/car.svg') }}"
+                     alt="Car travel icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Equivalent Car Travel</h5>
+                    <p class="metric-value-large countup"
+                       data-target="{{ km_driven|default(0)|round(1) }}">0</p>
+                    <p class="text-muted small">Based on 0.16 kg CO₂ per km</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/cel.svg') }}"
+                     alt="Smartphone charging icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Smartphone Charges</h5>
+                    <p class="metric-value-large countup"
+                       data-target="{{ phone_charges|default(0)|round(0) }}">0</p>
+                    <p class="text-muted small">Based on 0.0073 kg CO₂ per charge</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/tree.svg') }}"
+                     alt="Tree icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Trees Needed</h5>
+                    <p class="metric-value-large countup"
+                       data-target="{{ trees_needed|default(0)|round(2) }}">0</p>
+                    <p class="text-muted small">
+                        Based on 22 kg CO₂ absorbed per tree per year
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+         CHARTS
+    =============================================================== -->
+    <h2 class="mt-5 mb-3 fade-in-up">CO₂ Visualizations</h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 fade-in-up">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">CO₂ by Transport Mode</h5>
+                    <canvas id="modeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 fade-in-up">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Monthly CO₂ Trend</h5>
+                    <canvas id="monthChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-4 fade-in-up">
+        <a href="{{ url_for('dashboard.dashboard') }}" class="back-link">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    window.analyticsData = {
+        modeLabels: {{ co2_by_mode | map(attribute='mode') | list | tojson }},
+        modeData: {{ co2_by_mode | map(attribute='total') | list | tojson }},
+        monthLabels: {{ co2_by_month | map(attribute='month') | list | tojson }},
+        monthData: {{ co2_by_month | map(attribute='total') | list | tojson }}
+    };
+</script>
+
+<script src="{{ url_for('static', filename='analytics.js') }}"></script>
+
+{% endblock %}

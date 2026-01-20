@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/content/list.html
+     Purpose: Lists all content posts for the logged-in company.
+     Academic References:
+       - Flask template loops: https://flask.palletsprojects.com/en/3.0.x/templating/
+       - MDN HTML tables: https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - CRUD listing patterns: https://cs50.harvard.edu/x/2023/sql/
+       - Semantic HTML structure: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section
+   ===================================================================== -->
+
+<h1>Content Posts</h1>
+
+<!-- ------------------------------------------------------------
+     ACTION BAR — Create new post
+------------------------------------------------------------- -->
+<a href="{{ url_for('content.create_post') }}" class="btn-primary">
+    + New Post
+</a>
+
+<!-- ------------------------------------------------------------
+     POSTS TABLE — Uses ReturnImpact table-container styling
+------------------------------------------------------------- -->
+{% if posts %}
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Body</th>
+                <th>Created</th>
+                <th style="width: 180px;"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in posts %}
+            <tr>
+                <td>{{ p.title }}</td>
+                <td>{{ p.body }}</td>
+                <td>{{ p.created_at }}</td>
+
+                <td>
+                    <!-- Edit button -->
+                    <a href="{{ url_for('content.edit_post', post_id=p.id) }}"
+                       class="btn-primary"
+                       style="margin-right: 0.5rem;">
+                        Edit
+                    </a>
+
+                    <!-- Delete form (POST for safety) -->
+                    <form action="{{ url_for('content.delete_post', post_id=p.id) }}"
+                          method="post"
+                          style="display:inline;">
+                        <button type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Delete this post?')">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<p>No posts yet.</p>
+{% endif %}
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to dashboard
+------------------------------------------------------------- -->
+<a href="{{ url_for('dashboard.dashboard') }}" class="back-link">
+    ← Back to Dashboard
+</a>
+
+{% endblock %}

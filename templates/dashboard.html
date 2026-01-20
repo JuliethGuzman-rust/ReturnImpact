@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/dashboard/dashboard.html
+     Purpose: Main dashboard showing summary metrics, mini‑charts,
+              recent activity, and downloadable dashboard summary.
+     Academic References:
+       - Flask Jinja templating:
+         https://flask.palletsprojects.com/en/3.0.x/templating/
+       - MDN HTML tables:
+         https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - CSS Grid Layout:
+         https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+       - UI hierarchy principles:
+         https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Document_and_website_structure
+   ===================================================================== -->
+
+<div class="mt-4">
+
+    <h1 class="mb-4 fade-in-up">Dashboard</h1>
+
+    <div class="download-bar fade-in-up" style="margin-bottom: 2rem;">
+        <a href="{{ url_for('dashboard.download_dashboard', format='csv') }}" class="btn-primary">⬇️ Download CSV</a>
+        <a href="{{ url_for('dashboard.download_dashboard', format='json') }}" class="btn-primary">⬇️ Download JSON</a>
+        <a href="{{ url_for('dashboard.download_dashboard_pdf') }}" class="btn-primary">⬇️ Download PDF Summary</a>
+    </div>
+
+    <div class="section-divider fade-in-divider"></div>
+
+    <div class="dashboard-grid mb-5">
+
+        <div class="metric-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/returns.svg') }}"
+                     alt="Returns icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Total Returns</h5>
+                    <p class="metric-value-large countup" data-target="{{ total_returns|default(0) }}">0</p>
+                </div>
+            </div>
+
+            <canvas id="miniReturnsChart" height="100"></canvas>
+        </div>
+
+        <div class="metric-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/co2.svg') }}"
+                     alt="CO₂ icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Total CO₂ (kg)</h5>
+                    <p class="metric-value-large countup"
+                       data-target="{{ total_co2|default(0)|round(2) }}">0</p>
+                </div>
+            </div>
+
+            <canvas id="miniCO2Chart" height="100"></canvas>
+        </div>
+
+        <div class="metric-card fade-in-up">
+            <div class="dashboard-row">
+                <img src="{{ url_for('static', filename='icons/cost.svg') }}"
+                     alt="Cost icon"
+                     class="metric-icon-svg">
+
+                <div class="dashboard-text">
+                    <h5 class="card-title">Total Cost</h5>
+                    <p class="metric-value-large metric-currency countup"
+                    data-target="{{ total_cost|default(0)|round(2) }}">0</p>
+                </div>
+            </div>
+
+            <canvas id="miniCostChart" height="100"></canvas>
+        </div>
+
+    </div>
+
+    <div class="section-header fade-in-up"
+         style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2 style="margin:0;">Recent Returns</h2>
+        <a href="{{ url_for('dashboard.analytics') }}" class="btn-primary">📊 View CO₂ Analytics</a>
+    </div>
+
+    <div class="table-container fade-in-up">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>CO₂ (kg)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in recent %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>{{ r.order_number }}</td>
+                    <td>{{ r.return_date }}</td>
+                    <td>
+                        {% if r.co2_kg is not none %}
+                            {{ "%.3f"|format(r.co2_kg) }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('returns.view_return', return_id=r.id) }}"
+                           class="btn-primary">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                {% if recent|length == 0 %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding: 2rem;">
+                        No recent returns yet.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4 fade-in-up">
+        <a href="{{ url_for('returns.list_returns') }}" class="back-link">
+            ← View All Returns
+        </a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+
+{% endblock %}

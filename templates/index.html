@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- =====================================================================
+  templates/index.html
+  Purpose: Homepage introducing ReturnImpact and showing latest posts.
+
+  References:
+  - Flask template inheritance:
+    https://flask.palletsprojects.com/en/3.0.x/templating/
+  - MDN semantic sections (<section>, <article>):
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Element/section
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Element/article
+  - Accessible headings hierarchy (WCAG overview):
+    https://www.w3.org/WAI/standards-guidelines/wcag/
+===================================================================== -->
+
+<!-- ============================================================
+  HERO SECTION
+  Layout goal:
+  - Desktop: Text left, image right
+  - Mobile: Stacked, centered
+=============================================================== -->
+<section class="hero mt-5 fade-in-up" aria-label="Homepage hero">
+  <div class="hero-flex">
+
+    <div class="hero-content">
+      <h1 class="hero-title">ReturnImpact</h1>
+
+      <p class="hero-subtitle">
+        A sustainability-focused platform that helps companies track return costs
+        and measure the CO₂ footprint of reverse logistics.
+      </p>
+
+      <div class="hero-meta" aria-label="Key value points">
+        <span class="chip">CO₂ Tracking</span>
+        <span class="chip">Return Cost Analytics</span>
+        <span class="chip">Multimodal Routes</span>
+      </div>
+
+      {% if not session.get('user_id') %}
+      <a href="{{ url_for('auth.register') }}" class="btn-primary hero-btn">
+        Get Started →
+      </a>
+      {% endif %}
+    </div>
+
+    <div class="hero-image">
+      <img
+        src="{{ url_for('static', filename='img/returns_hero.png') }}"
+        class="hero-img"
+        alt="Sustainable reverse logistics illustration"
+      >
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+  FEATURES
+  Layout goal:
+  - Cards with consistent spacing
+  - Alternate rows for visual rhythm
+=============================================================== -->
+<section class="features mt-5" aria-label="Product highlights">
+  <h2 class="section-title fade-in-up">Why ReturnImpact?</h2>
+
+  <div class="feature-grid">
+
+    <!-- CO₂ Tracking -->
+    <div class="feature-card fade-in-up">
+      <div class="feature-row">
+        <img
+          src="{{ url_for('static', filename='img/feature_co2.png') }}"
+          class="feature-img"
+          alt="CO₂ tracking icon"
+        >
+
+        <div class="feature-text">
+          <h3>CO₂ Tracking</h3>
+          <p>
+            Calculate emissions for every return using scientifically referenced models
+            and the Climatiq Intermodal Freight API v3.
+          </p>
+
+          <div class="feature-links" aria-label="CO₂ references">
+            {% for item in LINKS.co2 %}
+              <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Analytics (reverse layout on desktop) -->
+    <div class="feature-card fade-in-up">
+      <div class="feature-row reverse">
+        <img
+          src="{{ url_for('static', filename='img/feature_costs.png') }}"
+          class="feature-img"
+          alt="Cost analytics icon"
+        >
+
+        <div class="feature-text">
+          <h3>Cost Analytics</h3>
+          <p>
+            Track refund, shipping, handling, and restocking costs to understand the true
+            financial impact of product returns.
+          </p>
+
+          <div class="feature-links" aria-label="Cost references">
+            {% for item in LINKS.costs %}
+              <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sustainability Insights -->
+    <div class="feature-card fade-in-up">
+      <div class="feature-row">
+        <img
+          src="{{ url_for('static', filename='img/feature_sustainability.png') }}"
+          class="feature-img"
+          alt="Sustainability icon"
+        >
+
+        <div class="feature-text">
+          <h3>Sustainability Insights</h3>
+          <p>
+            Convert CO₂ emissions into real-world equivalents like car travel, tree absorption,
+            and smartphone charging.
+          </p>
+
+          <div class="feature-links" aria-label="Sustainability references">
+            {% for item in LINKS.sustainability %}
+              <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+  ABOUT
+=============================================================== -->
+<section class="about mt-5 fade-in-up" aria-label="About the project">
+  <h2 class="section-title">About This Project</h2>
+
+  <div class="about-card">
+    <p class="about-text">
+      ReturnImpact was created as part of an academic project combining logistics engineering,
+      sustainability, and modern web development. The platform helps companies make informed
+      decisions about product returns by understanding both the financial and environmental impact.
+    </p>
+
+    <ul class="about-list">
+      <li>Tracks return costs and operational impact</li>
+      <li>Calculates multimodal CO₂ using real API models</li>
+      <li>Turns emissions into practical sustainability equivalents</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+  LATEST UPDATES
+  Layout goal:
+  - Grid on desktop, stacked on mobile
+=============================================================== -->
+<section class="latest mt-5 mb-5" aria-label="Latest updates">
+  <h2 class="section-title fade-in-up">Latest Updates</h2>
+
+  {% if posts %}
+    <div class="posts-grid">
+      {% for p in posts %}
+      <article class="post-card fade-in-up">
+        <h3 class="post-title">{{ p.title }}</h3>
+        <p class="post-body">{{ p.body }}</p>
+        <small class="post-meta">Posted on {{ p.created_at }}</small>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No posts yet. Admins can create posts from the Content section.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

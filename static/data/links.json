@@ -1,0 +1,40 @@
+{
+    "co2": [
+        {
+            "label": "Climatiq API",
+            "url": "https://www.climatiq.io"
+        },
+        {
+            "label": "IPCC Reports",
+            "url": "https://www.ipcc.ch"
+        },
+        {
+            "label": "Carbon Footprint",
+            "url": "https://www.carbonfootprint.com"
+        }
+    ],
+    "costs": [
+        {
+            "label": "Why you should be analyzing your return KPIs",
+            "url": "https://www.reveni.com/blog/why-you-should-be-analyzing-your-return-kpis"
+        },
+        {
+            "label": "Returns Management (McKinsey)",
+            "url": "https://www.mckinsey.com/industries/retail/our-insights/returning-to-order-improving-returns-management-for-apparel-companies"
+        }
+    ],
+    "sustainability": [
+        {
+            "label": "UN Environment Programme",
+            "url": "https://www.unep.org"
+        },
+        {
+            "label": "Carbon Trust",
+            "url": "https://www.carbontrust.com"
+        },
+        {
+            "label": "The Nature Conservancy",
+            "url": "https://www.nature.org/en-us/"
+        }
+    ]
+}

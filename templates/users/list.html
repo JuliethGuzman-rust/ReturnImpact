@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/users/list.html
+     Purpose: Lists all users for the logged-in company.
+     Academic References:
+       - MDN HTML tables: https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - Flask Jinja loops: https://flask.palletsprojects.com/en/3.0.x/templating/
+       - CRUD listing patterns: https://cs50.harvard.edu/x/2023/sql/
+   ===================================================================== -->
+
+<h1>Users</h1>
+
+<!-- ------------------------------------------------------------
+     ACTION BAR — Add new user
+------------------------------------------------------------- -->
+<a href="{{ url_for('users.create_user') }}" class="btn-primary">
+    + Add User
+</a>
+
+<!-- ------------------------------------------------------------
+     USERS TABLE — Uses ReturnImpact table-container styling
+------------------------------------------------------------- -->
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Created</th>
+                <th style="width: 180px;"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for u in users %}
+            <tr>
+                <td>{{ u.name }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.roles }}</td>
+                <td>{{ u.created_at }}</td>
+
+                <td>
+                    <!-- Edit button -->
+                    <a href="{{ url_for('users.edit_user', user_id=u.id) }}"
+                       class="btn-primary"
+                       style="margin-right: 0.5rem;">
+                        Edit
+                    </a>
+
+                    <!-- Delete form (POST for safety) -->
+                    <form method="post"
+                          action="{{ url_for('users.delete_user', user_id=u.id) }}"
+                          style="display:inline;">
+                        <button type="submit"
+                                class="btn-danger"
+                                onclick="return confirm('Delete this user?')">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to dashboard
+------------------------------------------------------------- -->
+<a href="{{ url_for('dashboard.dashboard') }}" class="back-link">
+    ← Back to Dashboard
+</a>
+
+{% endblock %}

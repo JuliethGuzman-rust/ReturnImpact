@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/returns/view.html
+     Purpose: Displays a single return record and its associated items.
+     Academic References:
+       - MDN HTML tables: https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask Jinja templating: https://flask.palletsprojects.com/en/3.0.x/templating/
+       - SQLite JOIN examples: https://www.sqlite.org/lang_select.html
+   ===================================================================== -->
+
+<h1>Return #{{ ret.id }}</h1>
+
+<!-- ------------------------------------------------------------
+     RETURN INFORMATION CARD
+------------------------------------------------------------- -->
+<div class="form-card">
+    <p><strong>Order:</strong> {{ ret.order_number }}</p>
+    <p><strong>Date:</strong> {{ ret.return_date }}</p>
+
+    <p><strong>Transport Mode:</strong> {{ ret.transport_name or "—" }}</p>
+    <p><strong>Departure:</strong> {{ ret.departure_location }}</p>
+    <p><strong>Destination:</strong> {{ ret.destination_location }}</p>
+    <p><strong>Weight:</strong> {{ ret.weight_kg }} kg</p>
+
+    <p>
+        <strong>CO₂:</strong>
+        {% if ret.co2_kg is not none %}
+            {{ "%.3f"|format(ret.co2_kg) }} kg
+        {% else %}
+            —
+        {% endif %}
+    </p>
+</div>
+
+<!-- ------------------------------------------------------------
+     COST BREAKDOWN
+------------------------------------------------------------- -->
+<h2>Costs</h2>
+<div class="form-card">
+    <ul>
+        <li><strong>Refund:</strong> {{ ret.cost_refund or "—" }}</li>
+        <li><strong>Shipping:</strong> {{ ret.cost_shipping or "—" }}</li>
+        <li><strong>Handling:</strong> {{ ret.cost_handling or "—" }}</li>
+        <li><strong>Restocking:</strong> {{ ret.cost_restocking or "—" }}</li>
+    </ul>
+</div>
+
+<!-- ------------------------------------------------------------
+     ADD ITEM BUTTON
+------------------------------------------------------------- -->
+<a href="{{ url_for('returns.add_return_item', return_id=ret.id) }}" class="btn-primary">
+    + Add Item
+</a>
+
+<!-- ------------------------------------------------------------
+     ITEMS TABLE
+------------------------------------------------------------- -->
+<h2>Items</h2>
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Variant</th>
+                <th>Qty</th>
+                <th>Condition</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in items %}
+            <tr>
+                <td>{{ i.product_name }}</td>
+                <td>{{ i.variant_name or "—" }}</td>
+                <td>{{ i.quantity }}</td>
+                <td>{{ i.condition }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- ------------------------------------------------------------
+     DELETE RETURN BUTTON
+------------------------------------------------------------- -->
+<form method="post" action="{{ url_for('returns.delete_return', return_id=ret.id) }}">
+    <button type="submit" class="btn-danger" onclick="return confirm('Delete return?')">
+        Delete Return
+    </button>
+</form>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION LINKS
+------------------------------------------------------------- -->
+<a href="{{ url_for('returns.list_returns') }}" class="back-link">← Back to Returns</a><br>
+<a href="{{ url_for('dashboard.dashboard') }}" class="back-link">← Back to Dashboard</a>
+
+{% endblock %}

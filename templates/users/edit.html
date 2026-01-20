@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/users/edit.html
+     Purpose: Form for editing an existing user account.
+     Academic References:
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask route variables: https://flask.palletsprojects.com/en/3.0.x/quickstart/
+       - CS50 SQL update patterns: https://cs50.harvard.edu/x/2023/sql/
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+   ===================================================================== -->
+
+<h1>Edit User</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form method="post">
+
+        <!-- Name -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name"
+                   name="name"
+                   type="text"
+                   value="{{ user.name }}"
+                   required>
+        </div>
+
+        <!-- Roles -->
+        <div class="form-group">
+            <label>Roles</label>
+
+            <div class="checkbox-group">
+                {% for r in roles %}
+                    <label>
+                        <input type="checkbox"
+                               name="roles"
+                               value="{{ r.id }}"
+                               {% if r.id in user_role_ids %}checked{% endif %}>
+                        {{ r.name }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to users list
+------------------------------------------------------------- -->
+<a href="{{ url_for('users.list_users') }}" class="back-link">
+    ← Back to Users
+</a>
+
+{% endblock %}

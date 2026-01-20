@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/users/create.html
+     Purpose: Form for creating a new user account.
+     Academic References:
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask POST handling: https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+   ===================================================================== -->
+
+<h1>Create User</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form method="post">
+
+        <!-- Name -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+        </div>
+
+        <!-- Roles -->
+        <div class="form-group">
+            <label>Roles</label>
+
+            <div class="checkbox-group">
+                {% for r in roles %}
+                    <label>
+                        <input type="checkbox" name="roles" value="{{ r.id }}">
+                        {{ r.name }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Create User</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to users list
+------------------------------------------------------------- -->
+<a href="{{ url_for('users.list_users') }}" class="back-link">
+    ← Back to Users
+</a>
+
+{% endblock %}

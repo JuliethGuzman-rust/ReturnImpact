@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/register.html
+     Purpose: Registration form for creating a new company + user account.
+     Academic References:
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask POST handling: https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+   ===================================================================== -->
+
+<h1 class="fade-in-up">Register Company</h1>
+
+<!-- ------------------------------------------------------------
+     REGISTRATION FORM CARD — Centered, animated
+------------------------------------------------------------- -->
+<div class="form-card fade-in-up" style="max-width: 520px; margin: 2rem auto;">
+    <form method="post">
+
+        <!-- Company Name -->
+        <div class="form-group">
+            <label for="company_name">Company name</label>
+            <input id="company_name" name="company_name" required>
+        </div>
+
+        <!-- User Name -->
+        <div class="form-group">
+            <label for="name">Your name</label>
+            <input id="name" name="name" required>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+            <label for="confirm">Confirm password</label>
+            <input id="confirm" name="confirm" type="password" required>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-primary" style="width: 100%;">
+            Create account
+        </button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to login
+------------------------------------------------------------- -->
+<div class="text-center fade-in-up" style="margin-top: 1rem;">
+    <a href="{{ url_for('auth.login') }}" class="back-link">
+        Already have an account? Log in
+    </a>
+</div>
+
+{% endblock %}
+

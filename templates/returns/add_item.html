@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/returns/add_item.html
+     Purpose:
+       Add a new item to an existing return record within the ReturnImpact
+       reverse‑logistics workflow.
+
+     Academic References:
+       - MDN Form Controls:
+         https://developer.mozilla.org/en-US/docs/Learn/Forms/Basic_native_form_controls
+       - Flask POST Handling:
+         https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - Semantic HTML Forms:
+         https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+       - Accessibility Guidelines (WCAG):
+         https://www.w3.org/WAI/WCAG21/quickref/?showtechniques=131#labels-or-instructions
+   ===================================================================== -->
+
+<h1>Add Item to Return #{{ ret.id }}</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form method="post">
+
+        <!-- ============================================================
+             PRODUCT SELECTION
+             Academic note:
+             Select menus require <label for=""> to ensure accessibility.
+        ============================================================ -->
+        <div class="form-group">
+            <label for="product_id">Product</label>
+            <select id="product_id" name="product_id" required>
+                {% for p in products %}
+                <option value="{{ p.id }}">{{ p.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- ============================================================
+             VARIANT SELECTION (Optional)
+             Academic note:
+             Optional fields should clearly indicate optionality.
+        ============================================================ -->
+        <div class="form-group">
+            <label for="variant_id">Variant (optional)</label>
+            <select id="variant_id" name="variant_id">
+                <option value="">None</option>
+                {% for v in variants %}
+                <option value="{{ v.id }}">{{ v.product_name }} — {{ v.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- ============================================================
+             QUANTITY
+             Academic note:
+             Numeric inputs should use type="number" for validation.
+        ============================================================ -->
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input id="quantity"
+                   type="number"
+                   name="quantity"
+                   min="1"
+                   required>
+        </div>
+
+        <!-- ============================================================
+             WEIGHT (kg)
+             Academic note:
+             step="0.01" supports decimal precision for logistics data.
+        ============================================================ -->
+        <div class="form-group">
+            <label for="weight">Weight (kg)</label>
+            <input id="weight"
+                   type="number"
+                   step="0.01"
+                   min="0"
+                   name="weight">
+        </div>
+
+        <!-- ============================================================
+             DIMENSIONS
+             Academic note:
+             Free-text field for L×W×H or other dimensional formats.
+        ============================================================ -->
+        <div class="form-group">
+            <label for="dimensions">Dimensions</label>
+            <input id="dimensions"
+                   name="dimensions"
+                   placeholder="e.g., 30×20×10 cm">
+        </div>
+
+        <!-- ============================================================
+             CONDITION
+             Academic note:
+             Free-text field for condition notes (e.g., damaged, new).
+        ============================================================ -->
+        <div class="form-group">
+            <label for="condition">Condition</label>
+            <input id="condition"
+                   name="condition"
+                   placeholder="e.g., damaged packaging">
+        </div>
+
+        <!-- ============================================================
+             FLAGS (Checkbox Group)
+             Academic note:
+             Grouping related checkboxes improves usability and WCAG compliance.
+        ============================================================ -->
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" name="restockable">
+                Restockable
+            </label>
+
+            <label>
+                <input type="checkbox" name="hazardous">
+                Hazardous
+            </label>
+
+            <label>
+                <input type="checkbox" name="temperature_sensitive">
+                Temperature Sensitive
+            </label>
+        </div>
+
+        <!-- ============================================================
+             SUBMIT BUTTON
+        ============================================================ -->
+        <button type="submit" class="btn-primary">Add Item</button>
+
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to return details
+------------------------------------------------------------- -->
+<a href="{{ url_for('returns.view_return', return_id=ret.id) }}"
+   class="back-link">
+    ← Back to Return
+</a>
+
+{% endblock %}

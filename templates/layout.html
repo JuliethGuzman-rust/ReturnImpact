@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- =====================================================================
+         Academic References:
+           - Flask Jinja templating:
+             https://flask.palletsprojects.com/en/3.0.x/templating/
+           - MDN HTML structure:
+             https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Document_and_website_structure
+           - Responsive navigation patterns (Flexbox):
+             https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout
+           - Google Fonts documentation:
+             https://fonts.google.com/knowledge
+       ===================================================================== -->
+
+    <!-- Responsive scaling for mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dynamic page title -->
+    <title>{% block title %}ReturnImpact{% endblock %}</title>
+
+    <!-- Nunito font for clean, readable typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+
+<!-- =====================================================================
+     HEADER — Full-width background, aligned content using .page-wrapper
+   ===================================================================== -->
+<header>
+
+    <!-- NAVBAR (full width) -->
+    <nav class="navbar navbar-split navbar-sticky">
+        <div class="page-wrapper">
+
+            <!-- Left navigation links -->
+            <div class="nav-left">
+                {% if session.get('user_id') %}
+                    <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ url_for('products.list_products') }}">Products</a>
+                    <a class="nav-link" href="{{ url_for('returns.list_returns') }}">Returns</a>
+                {% endif %}
+            </div>
+
+            <!-- Center brand -->
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}">ReturnImpact</a>
+            </div>
+
+            <!-- Right navigation links -->
+            <div class="nav-right">
+                {% if session.get('user_id') %}
+                    {% if 'admin' in session.get('roles', []) %}
+                        <a class="nav-link" href="{{ url_for('content.list_posts') }}">Content</a>
+                    {% endif %}
+                    <span class="nav-user">Hi, {{ session.get('user_name') }}</span>
+                    <a class="nav-link nav-logout" href="{{ url_for('auth.logout') }}">Logout</a>
+                {% else %}
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile hamburger toggle -->
+            <div class="nav-toggle" id="navToggle">
+                <span></span><span></span><span></span>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU (full width, content aligned) -->
+    <div class="nav-mobile" id="navMobile">
+        <div class="page-wrapper">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('products.list_products') }}">Products</a>
+                <a href="{{ url_for('returns.list_returns') }}">Returns</a>
+                {% if 'admin' in session.get('roles', []) %}
+                    <a href="{{ url_for('content.list_posts') }}">Content</a>
+                {% endif %}
+                <a href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+
+</header>
+
+<!-- Mobile menu toggle script -->
+<script src="{{ url_for('static', filename='nav.js') }}"></script>
+
+
+<!-- =====================================================================
+     FLASH MESSAGES — Animated feedback for user actions
+   ===================================================================== -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash fade-in-up">
+      {% for m in messages %}
+        <p>{{ m }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+<!-- =====================================================================
+     MAIN CONTENT AREA — Page content wrapped in .page-wrapper
+   ===================================================================== -->
+<main>
+    <div class="page-wrapper fade-in-up">
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+
+<!-- =====================================================================
+     FOOTER — Full-width background, aligned content using .page-wrapper
+   ===================================================================== -->
+<footer>
+    <div class="page-wrapper">
+        <p>© 2026 ReturnImpact — Sustainable Returns Analytics</p>
+    </div>
+</footer>
+
+</body>
+</html>

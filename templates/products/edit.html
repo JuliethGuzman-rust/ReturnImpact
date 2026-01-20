@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/products/edit.html
+     Purpose: Form for editing an existing product in the catalog.
+     Academic References:
+       - Flask POST handling: https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - CS50 SQL update patterns: https://cs50.harvard.edu/x/2023/sql/
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+   ===================================================================== -->
+
+<h1>Edit Product</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form method="post">
+
+        <!-- Product name -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" value="{{ product.name }}" required>
+        </div>
+
+        <!-- Product description -->
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4">{{ product.description }}</textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to product list
+------------------------------------------------------------- -->
+<a href="{{ url_for('products.list_products') }}" class="back-link">
+    ← Back to Products
+</a>
+
+{% endblock %}

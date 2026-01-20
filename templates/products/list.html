@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/products/list.html
+     Purpose: Lists all products for the logged-in company.
+     Academic References:
+       - Flask template loops: https://flask.palletsprojects.com/en/3.0.x/templating/
+       - MDN HTML tables: https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - CRUD listing patterns: https://cs50.harvard.edu/x/2023/sql/
+       - Semantic HTML structure: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
+   ===================================================================== -->
+
+<h1>Products</h1>
+
+<!-- ------------------------------------------------------------
+     ACTION BAR — Add new product
+------------------------------------------------------------- -->
+<a href="{{ url_for('products.create_product') }}" class="btn-primary">
+    + Add Product
+</a>
+
+<!-- ------------------------------------------------------------
+     PRODUCTS TABLE — Uses ReturnImpact table-container styling
+------------------------------------------------------------- -->
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th style="width: 300px;"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in products %}
+            <tr>
+                <td>{{ p.name }}</td>
+                <td>{{ p.description }}</td>
+
+                <td>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('products.edit_product', product_id=p.id) }}"
+                           class="btn-primary">
+                            Edit
+                        </a>
+
+                        <form method="post"
+                              action="{{ url_for('products.delete_product', product_id=p.id) }}">
+                            <button type="submit"
+                                    class="btn-danger"
+                                    onclick="return confirm('Delete this product?')">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

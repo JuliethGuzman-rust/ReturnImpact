@@ -1,0 +1,316 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/returns/create.html
+     Purpose:
+       Create a new return record with support for both single-mode and
+       fully dynamic multimodal routing.
+
+     Academic References:
+       - MDN Forms:
+         https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask POST Handling:
+         https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - Semantic HTML Forms:
+         https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+       - WCAG Form Labeling Guidelines:
+         https://www.w3.org/WAI/tutorials/forms/labels/
+       - MDN Form Validation:
+         https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation
+       - MDN DOMContentLoaded:
+         https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event
+   ===================================================================== -->
+
+<h1 class="mb-4 fade-in-up">Create Return</h1>
+
+<div class="form-card fade-in-up">
+  <form method="post">
+
+    <!-- ============================================================
+         ORDER DETAILS
+    ============================================================ -->
+    <h3>Order Details</h3>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label for="order_number">Order Number</label>
+        <input id="order_number" name="order_number" placeholder="e.g. ORD-2024-00123">
+      </div>
+
+      <div class="form-group">
+        <label for="return_date">Return Date</label>
+        <input id="return_date" type="date" name="return_date" required>
+      </div>
+    </div>
+
+    <hr class="form-divider">
+
+    <!-- ============================================================
+         TRANSPORT ROUTING
+    ============================================================ -->
+    <h3>Transport Routing</h3>
+
+    <div class="form-group">
+      <label class="form-label">Routing Type</label>
+
+      <div class="routing-grid">
+        <label class="routing-card" for="routing_single">
+          <input id="routing_single" type="radio" name="routing_type" value="single" checked>
+          <div class="routing-content">
+            <h4>Single Mode</h4>
+            <p>Simple route with one transport mode</p>
+          </div>
+        </label>
+
+        <label class="routing-card" for="routing_multi">
+          <input id="routing_multi" type="radio" name="routing_type" value="multi">
+          <div class="routing-content">
+            <h4>Multimodal</h4>
+            <p>Multiple legs with different transport modes</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         WEIGHT (ALWAYS VISIBLE)
+         Important: weight is required for both single + multimodal.
+    ============================================================ -->
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label for="weight_kg">Weight (kg)</label>
+        <input id="weight_kg" type="number" step="0.01" min="0" name="weight_kg" required>
+      </div>
+      <div class="form-group">
+        <!-- optional spacer/empty column to keep grid balanced -->
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SINGLE MODE
+    ============================================================ -->
+    <div id="single-mode-section">
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="transport_mode_id">Transport Mode</label>
+          <select id="transport_mode_id" name="transport_mode_id">
+            {% for t in transport_modes %}
+              <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <!-- spacer -->
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="departure_location">Departure Location</label>
+          <input id="departure_location" name="departure_location"
+                 placeholder="e.g. Rotterdam, Netherlands" required>
+        </div>
+
+        <div class="form-group">
+          <label for="destination_location">Destination Location</label>
+          <input id="destination_location" name="destination_location"
+                 placeholder="e.g. Hamburg, Germany" required>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================
+         MULTIMODAL
+    ============================================================ -->
+    <div id="multimodal-section" style="display:none;">
+      <p class="form-hint">
+        Each leg represents:
+        <strong>Location → Mode → Location</strong>
+      </p>
+
+      <div id="legs-container"></div>
+
+      <button type="button" class="btn-primary" id="addLegBtn">
+        + Add Leg
+      </button>
+    </div>
+
+    <hr class="form-divider">
+
+    <!-- ============================================================
+         COSTS
+    ============================================================ -->
+    <h3>Costs (€)</h3>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label for="cost_refund">Refund</label>
+        <input id="cost_refund" type="number" step="0.01" min="0" name="cost_refund" placeholder="0.00">
+      </div>
+
+      <div class="form-group">
+        <label for="cost_shipping">Shipping</label>
+        <input id="cost_shipping" type="number" step="0.01" min="0" name="cost_shipping" placeholder="0.00">
+      </div>
+
+      <div class="form-group">
+        <label for="cost_handling">Handling</label>
+        <input id="cost_handling" type="number" step="0.01" min="0" name="cost_handling" placeholder="0.00">
+      </div>
+
+      <div class="form-group">
+        <label for="cost_restocking">Restocking</label>
+        <input id="cost_restocking" type="number" step="0.01" min="0" name="cost_restocking" placeholder="0.00">
+      </div>
+    </div>
+
+    <!-- ============================================================
+         NOTES
+    ============================================================ -->
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes" name="notes" placeholder="Optional notes about this return..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Create Return</button>
+      <a href="{{ url_for('returns.list_returns') }}" class="back-link">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+<!-- ============================================================
+     JS — Routing toggle + Add Leg + Multimodal validation
+============================================================ -->
+<script>
+let legIndex = 0;
+
+function toggleRoutingMode() {
+  const single = document.getElementById("single-mode-section");
+  const multi = document.getElementById("multimodal-section");
+  const selected = document.querySelector("input[name='routing_type']:checked")?.value || "single";
+
+  // Single-mode inputs (disable when multi selected so they don't block submit)
+  const singleDeparture = document.getElementById("departure_location");
+  const singleDestination = document.getElementById("destination_location");
+  const singleModeSelect = document.getElementById("transport_mode_id");
+
+  if (selected === "single") {
+    single.style.display = "block";
+    multi.style.display = "none";
+
+    singleDeparture.disabled = false;
+    singleDestination.disabled = false;
+    singleModeSelect.disabled = false;
+
+    singleDeparture.required = true;
+    singleDestination.required = true;
+
+  } else {
+    single.style.display = "none";
+    multi.style.display = "block";
+
+    singleDeparture.disabled = true;
+    singleDestination.disabled = true;
+    singleModeSelect.disabled = true;
+
+    singleDeparture.required = false;
+    singleDestination.required = false;
+  }
+}
+
+function addLeg() {
+  const container = document.getElementById("legs-container");
+  if (!container) return;
+
+  const leg = document.createElement("div");
+  leg.className = "leg-card";
+  leg.style.marginBottom = "1rem";
+
+  leg.innerHTML = `
+    <h4>Leg ${legIndex + 1}</h4>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Start Location</label>
+        <input name="legs[${legIndex}][start]"
+               placeholder="e.g. Rotterdam, Netherlands"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label>Transport Mode</label>
+        <select name="legs[${legIndex}][mode]" required>
+          {% for t in transport_modes %}
+            <option value="{{ t.api_value }}">{{ t.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>End Location</label>
+        <input name="legs[${legIndex}][end]"
+               placeholder="e.g. Amsterdam Airport Schiphol"
+               required>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-danger" onclick="this.closest('.leg-card').remove()">
+        Remove Leg
+      </button>
+    </div>
+  `;
+
+  container.appendChild(leg);
+  legIndex++;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  toggleRoutingMode();
+
+  document.querySelectorAll("input[name='routing_type']").forEach((radio) => {
+    radio.addEventListener("change", toggleRoutingMode);
+  });
+
+  const addBtn = document.getElementById("addLegBtn");
+  if (addBtn) {
+    addBtn.addEventListener("click", addLeg);
+  }
+
+  const form = document.querySelector("form");
+  if (!form) return;
+
+  form.addEventListener("submit", function (event) {
+    const routingType = document.querySelector("input[name='routing_type']:checked")?.value || "single";
+
+    if (routingType === "multi") {
+      const legs = document.querySelectorAll("#legs-container .leg-card");
+      if (legs.length === 0) {
+        alert("Please add at least one leg for a multimodal route.");
+        event.preventDefault();
+        return;
+      }
+
+      for (const leg of legs) {
+        const start = leg.querySelector("input[name*='[start]']")?.value.trim();
+        const mode = leg.querySelector("select[name*='[mode]']")?.value.trim();
+        const end = leg.querySelector("input[name*='[end]']")?.value.trim();
+
+        if (!start || !mode || !end) {
+          alert("Each leg must include a start location, transport mode, and end location.");
+          event.preventDefault();
+          return;
+        }
+      }
+    }
+  });
+});
+</script>
+
+{% endblock %}

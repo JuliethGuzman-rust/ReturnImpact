@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/returns/list.html
+     Purpose:
+       Display all return records for the logged‑in company, including
+       transport details, CO₂ emissions, and financial impact.
+
+     Academic References:
+       - MDN HTML Tables:
+         https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables
+       - Flask Template Loops:
+         https://flask.palletsprojects.com/en/3.0.x/templating/
+       - CRUD Listing Patterns:
+         https://cs50.harvard.edu/x/2023/sql/
+       - WCAG Table Accessibility:
+         https://www.w3.org/WAI/tutorials/tables/
+   ===================================================================== -->
+
+<h1>Returns</h1>
+
+<!-- ACTION BAR -->
+<div class="download-bar" style="margin: 1rem 0 2rem;">
+    <a href="{{ url_for('returns.create_return') }}" class="btn-primary">
+        + Create Return
+    </a>
+
+    <a href="{{ url_for('returns.download_returns_csv') }}" class="btn-primary">
+        ⬇️ Download CSV
+    </a>
+</div>
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Order #</th>
+                <th scope="col">Date</th>
+                <th scope="col">Transport</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Weight (kg)</th>
+                <th scope="col">CO₂ (kg)</th>
+                <th scope="col">Total Cost</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for r in returns %}
+            <tr>
+                <td>{{ r.order_number }}</td>
+                <td>{{ r.return_date }}</td>
+
+                <!-- Show multimodal summary if available -->
+                <td>{{ r.transport_summary or r.transport_name or "—" }}</td>
+
+                <td>{{ r.departure_location or "—" }}</td>
+                <td>{{ r.destination_location or "—" }}</td>
+
+                <td>
+                    {% if r.weight_kg is not none %}
+                        {{ "%.2f"|format(r.weight_kg) }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if r.co2_kg is not none %}
+                        {{ "%.3f"|format(r.co2_kg) }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td class="currency">
+                    € {{ "%.2f"|format(
+                        (r.cost_refund or 0)
+                      + (r.cost_shipping or 0)
+                      + (r.cost_handling or 0)
+                      + (r.cost_restocking or 0)
+                    ) }}
+                </td>
+
+                <td>
+                    <a href="{{ url_for('returns.view_return', return_id=r.id) }}"
+                       class="btn-primary">
+                        View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+
+            {% if returns|length == 0 %}
+            <tr>
+                <td colspan="9" style="text-align:center; padding: 2rem;">
+                    No returns found. Create your first return above.
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<a href="{{ url_for('dashboard.dashboard') }}" class="back-link">
+    ← Back to Dashboard
+</a>
+
+{% endblock %}

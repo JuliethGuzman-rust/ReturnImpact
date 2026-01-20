@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/content/edit.html
+     Purpose: Form for editing an existing content post in the admin panel.
+     Academic References:
+       - Flask route variables: https://flask.palletsprojects.com/en/3.0.x/quickstart/
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+       - CS50 SQL update patterns: https://cs50.harvard.edu/x/2023/sql/
+   ===================================================================== -->
+
+<h1>Edit Post</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form action="{{ url_for('content.edit_post', post_id=post.id) }}" method="post">
+
+        <!-- Title field -->
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" value="{{ post.title }}" required>
+        </div>
+
+        <!-- Body field -->
+        <div class="form-group">
+            <label for="body">Body</label>
+            <textarea id="body" name="body" rows="6" required>{{ post.body }}</textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to posts list
+------------------------------------------------------------- -->
+<a href="{{ url_for('content.list_posts') }}" class="back-link">← Back to Posts</a>
+
+{% endblock %}
+

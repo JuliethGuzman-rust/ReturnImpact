@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/content/create.html
+     Purpose: Form for creating a new content post in the admin panel.
+     Academic References:
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask POST handling: https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+       - CS50 CRUD patterns: https://cs50.harvard.edu/x/2023/sql/
+   ===================================================================== -->
+
+<h1>Create New Post</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form action="{{ url_for('content.create_post') }}" method="post">
+
+        <!-- Title field -->
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" name="title" type="text" required>
+        </div>
+
+        <!-- Body field -->
+        <div class="form-group">
+            <label for="body">Body</label>
+            <textarea id="body" name="body" rows="6" required></textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Create Post</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to posts list
+------------------------------------------------------------- -->
+<a href="{{ url_for('content.list_posts') }}" class="back-link">← Back to Posts</a>
+
+{% endblock %}

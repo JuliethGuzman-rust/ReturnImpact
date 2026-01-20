@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<!-- =====================================================================
+     templates/products/create.html
+     Purpose: Form for creating a new product in the product catalog.
+     Academic References:
+       - MDN Forms: https://developer.mozilla.org/en-US/docs/Learn/Forms
+       - Flask POST handling: https://flask.palletsprojects.com/en/3.0.x/quickstart/#http-methods
+       - HTML form semantics: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+   ===================================================================== -->
+
+<h1>Create Product</h1>
+
+<!-- ------------------------------------------------------------
+     FORM CARD — Uses ReturnImpact design system
+------------------------------------------------------------- -->
+<div class="form-card">
+    <form method="post">
+
+        <!-- Product name -->
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required>
+        </div>
+
+        <!-- Product description -->
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn-primary">Create</button>
+    </form>
+</div>
+
+<!-- ------------------------------------------------------------
+     NAVIGATION — Back to product list
+------------------------------------------------------------- -->
+<a href="{{ url_for('products.list_products') }}" class="back-link">
+    ← Back to Products
+</a>
+
+{% endblock %}
