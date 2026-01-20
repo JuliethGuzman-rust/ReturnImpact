@@ -21,7 +21,7 @@ from flask import Flask, g, session, redirect, url_for, flash, render_template
 load_dotenv()
 
 # Import shared helpers (avoids circular imports)
-from .helpers import get_db, login_required
+from helpers import get_db, login_required
 
 app = Flask(__name__)
 
@@ -57,13 +57,13 @@ def close_db(exception):
 # Register Blueprints
 # Using package-relative imports to avoid circular imports.
 # ------------------------------------------------------------
-from .routes.auth import auth_bp
-from .routes.products import products_bp
-from .routes.variants import variants_bp
-from .routes.dashboard import dashboard_bp
-from .routes.returns import returns_bp
-from .routes.users import users_bp
-from .routes.content import content_bp
+from routes.auth import auth_bp
+from routes.products import products_bp
+from routes.variants import variants_bp
+from routes.dashboard import dashboard_bp
+from routes.returns import returns_bp
+from routes.users import users_bp
+from routes.content import content_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(products_bp)
