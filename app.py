@@ -20,13 +20,28 @@ from flask import Flask, g, session, redirect, url_for, flash, render_template
 # Load environment variables from .env
 load_dotenv()
 
-# Import shared helpers (avoids circular imports)
+# Import shared helpers
 from helpers import get_db, login_required
 
 app = Flask(__name__)
 
 # Secret key stored securely in .env
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-key-change-this")
+
+
+# ------------------------------------------------------------
+# Initialize database from schema.sql (first deploy)
+# ------------------------------------------------------------
+def init_db():
+    db = get_db()
+    with open("schema.sql", "r") as f:
+        db.executescript(f.read())
+    db.commit()
+
+
+# Run DB initialization once at startup
+init_db()
+
 
 # ------------------------------------------------------------
 # Inject external links from JSON into all templates
@@ -41,9 +56,9 @@ def inject_links():
         links = {}  # fallback if file missing
     return dict(LINKS=links)
 
+
 # ------------------------------------------------------------
 # Database teardown
-# Based on Flask's official SQLite pattern.
 # ------------------------------------------------------------
 @app.teardown_appcontext
 def close_db(exception):
@@ -55,7 +70,6 @@ def close_db(exception):
 
 # ------------------------------------------------------------
 # Register Blueprints
-# Using package-relative imports to avoid circular imports.
 # ------------------------------------------------------------
 from routes.auth import auth_bp
 from routes.products import products_bp
@@ -76,7 +90,6 @@ app.register_blueprint(content_bp)
 
 # ------------------------------------------------------------
 # Public landing page
-# Shows recent posts for the selected company.
 # ------------------------------------------------------------
 @app.route("/")
 def index():
@@ -89,7 +102,7 @@ def index():
         ORDER BY created_at DESC
         LIMIT 5
         """,
-        (session.get("company_id", 1),)  # fallback for public view
+        (session.get("company_id", 1),)
     ).fetchall()
 
     return render_template("index.html", posts=posts)
@@ -99,6 +112,5 @@ def index():
 # Run the app (development only)
 # ------------------------------------------------------------
 if __name__ == "__main__":
-    # When running as a module, use:
-    # python -m returnImpact.app
     app.run(debug=True)
+
