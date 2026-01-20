@@ -49,6 +49,12 @@ CREATE TABLE transport_modes (
     name TEXT NOT NULL UNIQUE,
     api_value TEXT
 );
+INSERT INTO transport_modes (name, api_value) VALUES
+('Road', 'road'),
+('Rail', 'rail'),
+('Sea', 'sea'),
+('Air', 'air');
+
 CREATE TABLE returns (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     company_id INTEGER NOT NULL,
