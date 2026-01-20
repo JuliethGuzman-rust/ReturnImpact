@@ -5,7 +5,7 @@
 # - CS50 Finance delete/update patterns: https://cs50.harvard.edu/x/2023/track/web/finance/
 
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash
-from ..helpers import get_db, login_required
+from helpers import get_db, login_required
 
 variants_bp = Blueprint("variants", __name__)
 
