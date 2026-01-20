@@ -117,3 +117,6 @@ CREATE TABLE content_posts (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id)
 );
+
+INSERT INTO roles (name) VALUES ('admin');
+
