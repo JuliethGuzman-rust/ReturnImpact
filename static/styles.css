@@ -508,6 +508,21 @@ textarea:focus {
     margin: 0 0 1rem 0;
 }
 
+/* Two-column layout on desktop, single on mobile */
+.form-grid,
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.4rem 2rem;
+    margin-bottom: 1.6rem;
+}
+
+@media (max-width: 900px) {
+    .form-grid,
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* ========================================================================
    ROUTING TYPE — Radio "cards" (Fixes the ugly routing-type layout)
@@ -929,3 +944,4 @@ footer {
     margin-top: 3rem;
     border-top: 4px solid var(--olive-green);
 }
+
