@@ -183,10 +183,12 @@
 
   </form>
 </div>
-
+{% endblock %}
 <!-- ============================================================
      JS — Routing toggle + Add Leg + Multimodal validation
 ============================================================ -->
+{% block scripts %} 
+{{ super() }}
 <script>
   const transportModes = [
     {% for t in transport_modes %}
