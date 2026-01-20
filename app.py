@@ -40,7 +40,8 @@ def init_db():
 
 
 # Run DB initialization once at startup
-init_db()
+with app.app_context():
+    init_db()
 
 
 # ------------------------------------------------------------
